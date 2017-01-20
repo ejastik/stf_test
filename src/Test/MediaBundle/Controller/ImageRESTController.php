@@ -173,8 +173,8 @@ class ImageRESTController extends PlatformRESTController
      *      {
      *          "name"="data",
      *          "dataType"="_json_",
-     *          "description"="Image data, such as purpose, description, alt and link.",
-     *          "requirement"="{('purpose':_string_,) ('alt':_string_,) ('link':_string_,) ('description':_text_})"
+     *          "description"="Image additional data, such as linked tag IDs.",
+     *          "requirement"="{'tags':[_integer_ (, _integer_)])"
      *      },
      * }
      * )
@@ -208,11 +208,16 @@ class ImageRESTController extends PlatformRESTController
             {
 //                $this->container->get('media.service')->setImageData($result['entity'], $data);
 
+                $request->request->replace($data);
+                $with = $this->linkEntities($result['entity']);
+
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($result['entity']);
                 $em->flush();
 
-                return $this->container->get('media_json.service')->toJSON($result['entity'], ['fullImage']);
+                $include = $this->getIncludes(['image' => implode(',', $with)]);
+
+                return $this->container->get('media_json.service')->toJSON($result['entity'], $include);
             }
 
             return $this->respondBadRequest($result['error']);

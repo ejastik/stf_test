@@ -8,6 +8,9 @@ services:
     parameter.service:
         class: 'Platform\RestBundle\Services\ParameterService'
         arguments: ['@service_container', '@doctrine.orm.entity_manager']
+    hydration.service:
+        class: 'Platform\RestBundle\Services\HydrationService'
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
 
     rest_exception.listener:
         class: 'Platform\RestBundle\EventListener\ExceptionListener'
