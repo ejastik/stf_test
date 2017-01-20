@@ -1,0 +1,429 @@
+<?php
+
+namespace Platform\UserBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
+
+/**
+ * UserRole
+ *
+ * @ORM\Table(name="userbundle_userrole")
+ * @ORM\Entity(repositoryClass="Platform\UserBundle\Entity\UserRoleRepository")
+ */
+class UserRole
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", nullable=false)
+     * @Assert\NotNull(message="Укажите название роли")
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="text", nullable=true)
+     */
+    private $description;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="dashboard", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $dashboard;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nomenclature", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $nomenclature;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="pharmacies", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $pharmacies;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="clients", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $clients;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="user_management", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $userManagement;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="config", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $config;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="orders", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $orders;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="reports", type="string", length=1, nullable=false, options={"default": "N"})
+     */
+    private $reports;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="chief_operator", type="boolean", nullable=true, options={"default": false})
+     */
+    private $chiefOperator;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Platform\UserBundle\Entity\UserInfo", mappedBy="userRole", cascade={"persist"})
+     */
+    private $users;
+
+    /**
+     * To string conversion for forms.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
+    /**
+     * Get not accessible fields.
+     *
+     * @return array
+     */
+    public function getNotAccessibleFields()
+    {
+        return [];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAdditionalParsers()
+    {
+        return [];
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->users = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return UserRole
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return UserRole
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set dashboard
+     *
+     * @param string $dashboard
+     *
+     * @return UserRole
+     */
+    public function setDashboard($dashboard)
+    {
+        $this->dashboard = $dashboard;
+
+        return $this;
+    }
+
+    /**
+     * Get dashboard
+     *
+     * @return string
+     */
+    public function getDashboard()
+    {
+        return $this->dashboard;
+    }
+
+    /**
+     * Set nomenclature
+     *
+     * @param string $nomenclature
+     *
+     * @return UserRole
+     */
+    public function setNomenclature($nomenclature)
+    {
+        $this->nomenclature = $nomenclature;
+
+        return $this;
+    }
+
+    /**
+     * Get nomenclature
+     *
+     * @return string
+     */
+    public function getNomenclature()
+    {
+        return $this->nomenclature;
+    }
+
+    /**
+     * Set pharmacies
+     *
+     * @param string $pharmacies
+     *
+     * @return UserRole
+     */
+    public function setPharmacies($pharmacies)
+    {
+        $this->pharmacies = $pharmacies;
+
+        return $this;
+    }
+
+    /**
+     * Get pharmacies
+     *
+     * @return string
+     */
+    public function getPharmacies()
+    {
+        return $this->pharmacies;
+    }
+
+    /**
+     * Set clients
+     *
+     * @param string $clients
+     *
+     * @return UserRole
+     */
+    public function setClients($clients)
+    {
+        $this->clients = $clients;
+
+        return $this;
+    }
+
+    /**
+     * Get clients
+     *
+     * @return string
+     */
+    public function getClients()
+    {
+        return $this->clients;
+    }
+
+    /**
+     * Set userManagement
+     *
+     * @param string $userManagement
+     *
+     * @return UserRole
+     */
+    public function setUserManagement($userManagement)
+    {
+        $this->userManagement = $userManagement;
+
+        return $this;
+    }
+
+    /**
+     * Get userManagement
+     *
+     * @return string
+     */
+    public function getUserManagement()
+    {
+        return $this->userManagement;
+    }
+
+    /**
+     * Set config
+     *
+     * @param string $config
+     *
+     * @return UserRole
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * Get config
+     *
+     * @return string
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * Set orders
+     *
+     * @param string $orders
+     *
+     * @return UserRole
+     */
+    public function setOrders($orders)
+    {
+        $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * Get orders
+     *
+     * @return string
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+
+    /**
+     * Set reports
+     *
+     * @param string $reports
+     *
+     * @return UserRole
+     */
+    public function setReports($reports)
+    {
+        $this->reports = $reports;
+
+        return $this;
+    }
+
+    /**
+     * Get reports
+     *
+     * @return string
+     */
+    public function getReports()
+    {
+        return $this->reports;
+    }
+
+    /**
+     * Add user
+     *
+     * @param \Platform\UserBundle\Entity\UserInfo $user
+     *
+     * @return UserRole
+     */
+    public function addUser(\Platform\UserBundle\Entity\UserInfo $user)
+    {
+        $this->users[] = $user;
+
+        return $this;
+    }
+
+    /**
+     * Remove user
+     *
+     * @param \Platform\UserBundle\Entity\UserInfo $user
+     */
+    public function removeUser(\Platform\UserBundle\Entity\UserInfo $user)
+    {
+        $this->users->removeElement($user);
+    }
+
+    /**
+     * Get users
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUsers()
+    {
+        return $this->users;
+    }
+}

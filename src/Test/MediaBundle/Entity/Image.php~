@@ -1,0 +1,102 @@
+<?php
+
+namespace Test\MediaBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Platform\RestBundle\Validator\Constraints\URL as URL;
+
+/**
+ * Image
+ *
+ * @ORM\Table(name="testmediabundle_image")
+ * @ORM\Entity(repositoryClass="Test\MediaBundle\Entity\ImageRepository")
+ * @Gedmo\SoftDeleteable(fieldName="deletedAt", timeAware=false)
+ */
+class Image
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="url", type="string", nullable=false, options={"default" = "image"})
+     * @Assert\NotNull()
+     * @Assert\NotBlank()
+     * @URL
+     */
+    private $url;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="purpose", type="string", nullable=true)
+     */
+    private $purpose;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="image_type", type="string", nullable=true)
+     */
+    private $imageType;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Test\MediaBundle\Entity\ImageTag", mappedBy="image", cascade={"persist", "remove"})
+     */
+    private $tags;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="deletedAt", type="datetime", nullable=true)
+     */
+    private $deletedAt;
+
+    /**
+     * To string conversion for forms.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->id;
+    }
+
+    /**
+     * Get not accessible fields.
+     *
+     * @return array
+     */
+    public function getNotAccessibleFields()
+    {
+        return ['url', 'imageType'];
+    }
+
+    /**
+     * Get additional parsers
+     *
+     * @return array
+     */
+    public function getAdditionalParsers()
+    {
+        return [
+            [
+                'service' => 'media.service',
+                'method' => 'generateImageUrl',
+                'field' => null,
+                'only_for_entities' => [],
+                'not_for_entities' => [],
+            ],
+        ];
+    }
+}

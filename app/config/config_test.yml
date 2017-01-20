@@ -1,0 +1,20 @@
+imports:
+    - { resource: config_dev.yml }
+
+framework:
+    test: ~
+    session:
+        storage_id: session.storage.mock_file
+    profiler:
+        enabled: false
+
+web_profiler:
+    toolbar: false
+    intercept_redirects: false
+
+swiftmailer:
+    disable_delivery: true
+
+parameters:
+    access_token: 'NjcxOTU3ODZiODQxMWUyOTA1YjU5ZmJhYjkzMGJhYjA0NDkzNWQ1MDY1ZGNjNzUzNmJiNDc1OTU0NjQ1YTk4Yw'
+

@@ -1,0 +1,4 @@
+rest_oauth_api:
+    type: rest
+    resource: '@PlatformRestBundle/Controller/OAuthController.php'
+    prefix: /oauth/v2

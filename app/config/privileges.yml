@@ -1,0 +1,4 @@
+parameters:
+    privileges:
+        default:
+            other: 'USER'

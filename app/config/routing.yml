@@ -1,0 +1,21 @@
+test_media_bundle_image_api:
+    resource: "@TestMediaBundle/Resources/config/routing.yml"
+    type:   rest
+    prefix:   /api
+
+#platform_oauth_api:
+#    resource: "@PlatformRestBundle/Resources/config/routing.yml"
+#    prefix:   /
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+fos_oauth_server_token:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/token.xml"
+
+fos_oauth_server_authorize:
+    resource: "@FOSOAuthServerBundle/Resources/config/routing/authorize.xml"

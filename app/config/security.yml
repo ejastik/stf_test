@@ -1,0 +1,100 @@
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: sha512
+
+    role_hierarchy:
+        ROLE_API:          ROLE_USER
+        ROLE_ADMIN:        ROLE_USER
+        ROLE_SUPERADMIN:   [ ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH ]
+
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username
+#        user_provider:
+#            id: user.user.provider
+
+    firewalls:
+        dev:
+            pattern:  ^/(_(profiler|wdt)|css|images|js)/
+            stateless:  true
+            security: false
+
+        login_firewall:
+            pattern: ^/login$
+            stateless:  true
+            anonymous:  ~
+
+        resetting_firewall:
+            pattern: ^/resetting
+            stateless:  true
+            anonymous:  ~
+
+        oauth_token:
+            pattern:    ^/oauth/v2/token
+            stateless:  true
+            #security:   false
+            anonymous:  ~
+
+        oauth:
+            pattern:    ^/oauth
+            stateless:  true
+            anonymous:  ~
+
+        oauth_authorize:
+            pattern:    ^/oauth/v2/auth
+            stateless:  true
+            form_login:
+                provider: fos_userbundle
+                check_path: fos_user_security_check
+                login_path: fos_user_security_login
+            anonymous: true
+
+        apidoc:
+            pattern:    ^/api/doc
+            anonymous:  true
+
+        admin:
+            pattern:    /admin
+            fos_oauth:  true
+            stateless:  true
+            # anonymous must be set false !!!
+            anonymous:  false
+
+        userInfo:
+            pattern:    /user_info
+            fos_oauth:  true
+            stateless:  true
+            anonymous:  false
+
+        api:
+            pattern:    /api
+            fos_oauth:  true
+            stateless:  true
+            anonymous:  true
+
+        main:
+            pattern: ^/
+            anonymous: ~
+            stateless:  true
+            form_login:
+                provider: fos_userbundle
+#                csrf_provider: form.csrf_provider
+                default_target_path: /
+                always_use_default_target_path: true
+            logout:       true
+            anonymous:    false
+
+    access_control:
+#        - { path: /admin, role: ROLE_USER }
+#        - { path: /admin, role: ROLE_ADMIN }
+        - { path: /admin, roles: [ROLE_ADMIN, ROLE_SUPERADMIN] }
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/oauth, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/doc, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ], method: GET }
+        - { path: ^/api/doc, roles: [ ROLE_ADMIN ] }
+        - { path: /user_info, roles: [ IS_AUTHENTICATED_FULLY ] }
+        - { path: /api, roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+        - { path: ^/upload/, roles: [ IS_AUTHENTICATED_FULLY ] }
+        - { path: ^/$, role: IS_AUTHENTICATED_FULLY }

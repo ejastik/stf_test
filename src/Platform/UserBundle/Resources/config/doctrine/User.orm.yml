@@ -1,0 +1,30 @@
+Platform\UserBundle\Entity\User:
+    type:  entity
+    table: fos_user
+    repositoryClass: Platform\UserBundle\Entity\UserRepository
+
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+
+    fields:
+        confirmRequestedAt:
+            type: datetime
+            nullable: true
+
+    manyToMany:
+        groups:
+            targetEntity: Group
+            inversedBy: users
+            joinTable:
+                name: fos_user_group
+                joinColumns:
+                    user_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    group_id:
+                        referencedColumnName: id
+
+

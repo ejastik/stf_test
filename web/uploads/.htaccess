@@ -1,0 +1,13 @@
+<IfModule mod_expires.c>
+	ExpiresActivate On
+	ExpiresByType image/jpeg A2419200
+	ExpiresByType image/jpg A2419200
+	ExpiresByType image/gif A2412900
+	ExpiresByType image/png A2412900
+	ExpiresDefault A2412900
+</IfModule>
+
+<IfModule mod_headers.c>
+	Header always set Cache-Control "max-age=2412900, public"
+	Header always unset Last-Modified
+</IfModule>

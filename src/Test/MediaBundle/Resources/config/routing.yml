@@ -1,0 +1,9 @@
+media_image_api:
+    resource: "@TestMediaBundle/Controller/ImageRESTController.php"
+    type:   rest
+    prefix:   /v1
+
+media_tag_api:
+    resource: "@TestMediaBundle/Controller/TagRESTController.php"
+    type:   rest
+    prefix:   /v1

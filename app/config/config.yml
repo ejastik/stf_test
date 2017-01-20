@@ -1,0 +1,344 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: privileges.yml }
+
+framework:
+    #esi:             ~
+    translator:      { fallback: '%locale%' }
+    secret:          '%secret%'
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: '%kernel.debug%'
+    form: ~
+    csrf_protection: false
+    validation:      { enable_annotations: true }
+    session:
+        # handler_id set to null will use default session handler from php.ini
+        handler_id:  ~
+        cookie_lifetime:    30758400 # 1 year
+    session:         false
+    templating:
+        engines: ['twig']
+        #assets_version: SomeVersionScheme
+    default_locale:  "%locale%"
+    trusted_proxies: ~
+    fragments:       ~
+
+# Twig Configuration
+twig:
+    debug:            '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    exception_controller: 'FOS\RestBundle\Controller\ExceptionController::showAction'
+
+# Assetic Configuration
+assetic:
+    debug:          '%kernel.debug%'
+    use_controller: false
+    bundles:        [ ]
+    #java: /usr/bin/java
+    filters:
+        cssrewrite: ~
+        #closure:
+        #    jar: %kernel.root_dir%/Resources/java/compiler.jar
+        #yui_css:
+        #    jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.7.jar
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   '%database_driver%'
+        host:     '%database_host%'
+        port:     '%database_port%'
+        dbname:   '%database_name%'
+        user:     '%database_user%'
+        password: '%database_password%'
+        charset:  UTF8
+        # if using pdo_sqlite as your database driver, add the path in parameters.yml
+        # e.g. database_path: %kernel.root_dir%/data/data.db3
+        # path:     %database_path%
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        auto_mapping: true
+        filters:
+            soft_deleteable:
+                class: Gedmo\SoftDeleteable\Filter\SoftDeleteableFilter
+                enabled: true
+
+services:
+    gedmo.listener.softdeleteable:
+        class: Gedmo\SoftDeleteable\SoftDeleteableListener
+        tags:
+            - { name: 'doctrine.event_subscriber', connection: default }
+        calls:
+            - [ setAnnotationReader, [ '@annotation_reader' ] ]
+    gedmo.listener.timestampable:
+        class: Gedmo\Timestampable\TimestampableListener
+        tags:
+            - { name: 'doctrine.event_subscriber', connection: default }
+        calls:
+            - [ setAnnotationReader, [ '@annotation_reader' ] ]
+
+jms_serializer:
+    handlers:
+        datetime:
+            default_format: "Y-m-d H:i:s"
+
+# Swiftmailer Configuration
+swiftmailer:
+    transport: '%mailer_transport%'
+    host:      '%mailer_host%'
+    username:  '%mailer_user%'
+    password:  '%mailer_password%'
+    port:       465
+    encryption: ssl
+    spool:     { type: automailer }
+
+fos_rest:
+    disable_csrf_role: ROLE_API
+    param_fetcher_listener: true
+    view:
+        mime_types:
+            json: ['application/json', 'application/json;version=1.0', 'application/json;version=1.1', 'application/json;version=1.2']
+        view_response_listener: 'force'
+        formats:
+            xml:  true
+            json: true
+        templating_formats:
+            html: true
+    format_listener:
+        rules:
+            - { path: ^/, priorities: ['json'], fallback_format: 'json', prefer_extension: true }
+#            - { path: ^/, priorities: ['html', 'json'], fallback_format: ~, prefer_extension: true }
+            - { path: /api/doc, priorities: ['html'], fallback_format: ~, prefer_extension: true }
+        media_type:
+            version_regex: '/(v|version)=(?P<version>[0-9\.]+)/'
+    exception:
+        codes:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
+            'Doctrine\ORM\OptimisticLockException': HTTP_CONFLICT
+        messages:
+            'Symfony\Component\Routing\Exception\ResourceNotFoundException': true
+    allowed_methods_listener: true
+    access_denied_listener:
+        json: true
+    routing_loader:
+        default_format: json
+    body_listener: true
+    body_converter:
+        enabled: true
+
+sensio_framework_extra:
+    request: { converters: true }
+    view:    { annotations: false }
+    router:  { annotations: true }
+
+fos_http_cache:
+    cache_control:
+        rules:
+            # the controls section values are used in a call to Response::setCache();
+            -
+                match:
+                    path: ^/notes
+                    methods: [GET, HEAD]
+                headers:
+                    cache_control: { public: true, max_age: 15, s_maxage: 30 }
+                    last_modified: "-1 hour"
+                    vary: [Accept-Encoding, Accept-Language]
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations
+
+fos_user:
+    db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
+    firewall_name: main
+    user_class: Platform\UserBundle\Entity\User
+    group:
+        group_class: Platform\UserBundle\Entity\Group
+    from_email:
+        address: '%email.from%'
+        sender_name: '%email.name%'
+    resetting:
+        token_ttl: 86400
+        email:
+            template:   FOSUserBundle:Resetting:email.txt.twig
+
+fos_oauth_server:
+    db_driver: orm       # Driver availables: orm, mongodb, or propel
+    client_class:        Platform\RestBundle\Entity\Client
+    access_token_class:  Platform\RestBundle\Entity\AccessToken
+    refresh_token_class: Platform\RestBundle\Entity\RefreshToken
+    auth_code_class:     Platform\RestBundle\Entity\AuthCode
+    service:
+        user_provider: user.user.provider
+        options:
+            supported_scopes: user
+            access_token_lifetime: 86400
+
+parameters:
+    platform_role_check: false
+    email.name: '-'
+    email.from: 'itdoors.development@gmail.com'
+    sent.email.aging: 14 #days
+    unsent.email.aging: 1 #days
+    logs.aging: 14 #days
+    include_tms: false
+    use_grape_load: false
+    max_order_pause_interval: 60 #minutes
+    pagination:
+        default_limit: 10
+        max_limit: 20
+        max_counter: 20
+    password:
+        min_length: 5
+        max_length: 50
+        lowercase_letters_required: false
+        uppercase_letters_required: false
+        numbers_required: false
+    recaptcha_key: ''
+    slack:
+        key: ''
+        channel: ''
+        name: 'Buggy Ghost'
+        icon: ':ghost:'
+    search:
+        fields: { name: 4, shortDescription: 3, address: 2, description: 1 }
+        full_term_valuable_multiplier: 10
+        part_term_valuable_multiplier: 0.8
+    web_dir: '%kernel.root_dir%/../web'
+    geocode_key: ''
+    allowed_types: ['image/jpeg', 'image/gif', 'image/png']
+    png_compression_level: 9
+    jpeg_quality: 92
+    image_file_name_length: 10
+    gps_distance_calculation:
+        grape_size: 10000
+        algorithm: 'haversine'
+    avatar_dir:
+        dir: '/uploads/avatars'
+        size: { width: 100, height: 100 }
+        allowed_types: ['image/jpeg', 'image/png']
+        noavatar: '/images/noavatar.png'
+        png_compression_level: 9
+        jpeg_quality: 92
+    image_dirs:
+        main:
+            dir: '/uploads/images/main'
+            size: { width: 1000, height: 1000 }
+            png_compression_level: 9
+            jpeg_quality: 92
+            crop: false
+            enlarge: false
+#            default: true
+            noimage: 'noimage.jpg'
+            only_for: []
+            not_for: []
+    original_images:
+        dir: '/uploads/images/originals'
+        size: { width: 2000, height: 2000 }
+        png_compression_level: 9
+        jpeg_quality: 92
+        noimage: 'noimage.jpg'
+#    main_images:
+#        dir: '/uploads/headers'
+#        size: { width: 1920, height: 600 }
+#        png_compression_level: 9
+#        jpeg_quality: 92
+#        crop: true
+#        enlarge: true
+#        noimage: 'noimage.jpg'
+    banners:
+        dir: '/uploads/main_page'
+        size: { width: 540, height: 360 }
+        png_compression_level: 9
+        jpeg_quality: 92
+    file_uploader:
+        dir: '/uploads/files'
+        allowed_types: ['image/jpeg', 'image/png', 'application/pdf', 'application/x-rar-compressed', 'application/zip', 'application/octet-stream']
+        max_file_size: 2097152 #bytes
+        file_save_retries: 100
+        nesting_level: 4
+        file_name_length: 10
+    oauth:
+        google:
+            client_id: ''
+            client_secret: ''
+#            scope: 'email profile'
+            scope: 'profile'
+        facebook:
+            client_id: ''
+            client_secret: ''
+#            scope: 'email,user_about_me'
+            scope: 'user_about_me'
+            picture:
+                width: 100
+                type: 'square'
+        vkontakte:
+            client_id: ''
+            client_secret: ''
+#            scope: 'email'
+            scope: ''
+            picture:
+                width: 100
+        odnoklassniki:
+            client_id: ''
+            client_secret: ''
+#            scope: 'email'
+            scope: ''
+        twitter:
+            consumer_key: ''
+            consumer_secret: ''
+        instagram:
+            client_id: ''
+            client_secret: ''
+            scope: 'basic'
+
+knp_gaufrette:
+    adapters:
+        hdd_avatars:
+            local:
+                directory: '%web_dir%/uploads/avatars'
+                create:     true
+        hdd_originals:
+            local:
+                directory: '%web_dir%/uploads/images/originals'
+                create:     true
+        hdd_main:
+            local:
+                directory: '%web_dir%/uploads/images/main'
+                create:     true
+        hdd_main_images:
+            local:
+                directory: '%web_dir%/uploads/headers'
+                create:     true
+        hdd_banners:
+            local:
+                directory: '%web_dir%/uploads/main_page'
+                create:     true
+        hdd_uploaded_files:
+            local:
+                directory: '%web_dir%/uploads/files'
+                create:     true
+    filesystems:
+        avatars:
+            adapter:    hdd_avatars
+            alias:      hdd_avatars_filesystem
+        originals:
+            adapter:    hdd_originals
+            alias:      hdd_originals_filesystem
+        main:
+            adapter:    hdd_main
+            alias:      hdd_main_filesystem
+        main_images:
+            adapter:    hdd_main_images
+            alias:      hdd_main_images_filesystem
+        banners:
+            adapter:    hdd_banners
+            alias:      hdd_banners_filesystem
+        uploaded_files:
+            adapter:    hdd_uploaded_files
+            alias:      hdd_uploaded_files_filesystem

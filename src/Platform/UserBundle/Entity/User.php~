@@ -1,0 +1,215 @@
+<?php
+namespace Platform\UserBundle\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use FOS\UserBundle\Model\User as BaseUser;
+use Doctrine\ORM\Mapping as ORM;
+use FOS\UserBundle\Model\UserInterface;
+
+/**
+ * User
+ */
+class User extends BaseUser implements UserInterface
+{
+    public function __construct()
+    {
+        parent::__construct();
+        // your own logic
+
+        $this->favoriteRealty = new ArrayCollection();
+    }
+
+    /**
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    protected $groups;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Platform\UserBundle\Entity\UserInfo", mappedBy="user", fetch="EAGER")
+     */
+    private $userInfo;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Cosmo\PharmacyBundle\Entity\Network", mappedBy="user", fetch="EAGER")
+     */
+    private $network;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Cosmo\OrderBundle\Entity\Order", mappedBy="operator")
+     */
+    private $orders;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="confirm_requested_at", type="datetime", nullable=true)
+     */
+    private $confirmRequestedAt;
+
+    /**
+     * @return string
+     */
+    public function getNameOrLogin()
+    {
+        $userName = '';
+
+        if ($this->getUserInfo())
+        {
+            return (string)$this->getUserInfo();
+        }
+
+        return '[' . $this->username . ']' . $userName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNameAndLogin()
+    {
+        $userName = '';
+
+        if ($this->getUserInfo())
+        {
+            $userName = ' ' . (string)$this->getUserInfo();
+        }
+
+        return '[' . $this->username . ']' . $userName;
+    }
+
+    /**
+     * To string conversion for forms.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        if ($this->getUserInfo())
+        {
+            return (string)$this->getUserInfo();
+        }
+
+        return '-';
+    }
+
+    /**
+     * Get not accessible fields.
+     *
+     * @return array
+     */
+    public function getNotAccessibleFields()
+    {
+        return ['username', 'usernameCanonical', 'email', 'emailCanonical', 'salt', 'password', 'lastLogin', 'roles', 'confirmationToken', 'passwordRequestedAt', 'locked', 'expired', 'credentialsExpired'];
+    }
+
+
+    /**
+     * Set userInfo
+     *
+     * @param \Platform\UserBundle\Entity\UserInfo $userInfo
+     *
+     * @return User
+     */
+    public function setUserInfo(\Platform\UserBundle\Entity\UserInfo $userInfo = null)
+    {
+        $this->userInfo = $userInfo;
+
+        return $this;
+    }
+
+    /**
+     * Get userInfo
+     *
+     * @return \Platform\UserBundle\Entity\UserInfo
+     */
+    public function getUserInfo()
+    {
+        return $this->userInfo;
+    }
+
+    /**
+     * Set confirmRequestedAt
+     *
+     * @param \DateTime $confirmRequestedAt
+     *
+     * @return User
+     */
+    public function setConfirmRequestedAt($confirmRequestedAt)
+    {
+        $this->confirmRequestedAt = $confirmRequestedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get confirmRequestedAt
+     *
+     * @return \DateTime
+     */
+    public function getConfirmRequestedAt()
+    {
+        return $this->confirmRequestedAt;
+    }
+
+    /**
+     * Set network
+     *
+     * @param \Cosmo\PharmacyBundle\Entity\Network $network
+     *
+     * @return User
+     */
+    public function setNetwork(\Cosmo\PharmacyBundle\Entity\Network $network = null)
+    {
+        $this->network = $network;
+
+        return $this;
+    }
+
+    /**
+     * Get network
+     *
+     * @return \Cosmo\PharmacyBundle\Entity\Network
+     */
+    public function getNetwork()
+    {
+        return $this->network;
+    }
+
+    /**
+     * Add order
+     *
+     * @param \Cosmo\OrderBundle\Entity\Order $order
+     *
+     * @return User
+     */
+    public function addOrder(\Cosmo\OrderBundle\Entity\Order $order)
+    {
+        $this->orders[] = $order;
+
+        return $this;
+    }
+
+    /**
+     * Remove order
+     *
+     * @param \Cosmo\OrderBundle\Entity\Order $order
+     */
+    public function removeOrder(\Cosmo\OrderBundle\Entity\Order $order)
+    {
+        $this->orders->removeElement($order);
+    }
+
+    /**
+     * Get orders
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOrders()
+    {
+        return $this->orders;
+    }
+}

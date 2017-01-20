@@ -1,0 +1,22 @@
+parameters:
+    user.entity.user.class: Platform\UserBundle\Entity\User
+    user.user.provider.class: Platform\UserBundle\Provider\UserProvider
+    user_json.service.class: Platform\UserBundle\Services\UserJSONService
+    avatar.service.class: Platform\UserBundle\Services\AvatarService
+    account.service.class: Platform\UserBundle\Services\AccountService
+    user_role.service.class: Platform\UserBundle\Services\UserRoleService
+
+services:
+    user.user.manager:
+        class: Doctrine\ORM\EntityManager
+        factory_method: getManagerForClass
+        factory_service: doctrine
+        arguments: ['%user.entity.user.class%']
+    user.user.repository:
+        class: Platform\UserBundle\Entity\UserRepository
+        factory_method: getRepository
+        factory_service: user.user.manager
+        arguments: ['%user.entity.user.class%']
+    user.user.provider:
+        class: '%user.user.provider.class%'
+        arguments: ['@user.user.repository']

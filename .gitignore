@@ -1,0 +1,14 @@
+web/bundles/
+web/uploads/avatars/*
+web/uploads/headers/*
+web/uploads/images/*
+web/uploads/main_page/*
+web/uploads/files/*
+app/cache/
+app/logs/
+build/
+vendor/
+bin/
+composer.phar
+app/config/parameters.yml
+.idea/

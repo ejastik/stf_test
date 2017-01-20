@@ -1,0 +1,10 @@
+services:
+    media.service:
+        class: 'Test\MediaBundle\Services\MediaService'
+        arguments: ['@service_container', '@doctrine.orm.entity_manager']
+    media_json.service:
+        class: 'Test\MediaBundle\Services\MediaJSONService'
+        arguments: ['@service_container']
+    tag_json.service:
+        class: 'Test\MediaBundle\Services\TagJSONService'
+        arguments: ['@service_container']
