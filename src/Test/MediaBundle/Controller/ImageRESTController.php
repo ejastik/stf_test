@@ -68,7 +68,7 @@ class ImageRESTController extends PlatformRESTController
                 return $this->container->get('media_json.service')->toJSON($entity, $include);
             }
 
-            return $this->respondNotFoundOrOK('Картинка с id ' . $id . ' не найден в базе');
+            return $this->respondNotFoundOrOK('Картинка с id ' . $id . ' не найден в базе', true);
         } catch (\Exception $e) {
             return $this->handleServerError(__FILE__, $e);
         }

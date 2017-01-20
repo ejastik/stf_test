@@ -349,7 +349,12 @@ class PlatformRESTController extends Controller
 
         if ($request->query->get('noerrors') !== null)
         {
-            return FOSView::create($errors ?? [], Codes::HTTP_OK);
+            if ($forceErrors)
+            {
+                return FOSView::create([], Codes::HTTP_OK);
+            } else {
+                return FOSView::create($errors ?? [], Codes::HTTP_OK);
+            }
         } else {
             if (
                 ($errors === null) ||
