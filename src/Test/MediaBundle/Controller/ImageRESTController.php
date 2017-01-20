@@ -208,8 +208,13 @@ class ImageRESTController extends PlatformRESTController
             {
 //                $this->container->get('media.service')->setImageData($result['entity'], $data);
 
-                $request->request->replace($data);
-                $with = $this->linkEntities($result['entity']);
+                if ($data)
+                {
+                    $request->request->replace($data);
+                    $with = $this->linkEntities($result['entity']);
+                } else {
+                    $with = [];
+                }
 
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($result['entity']);
